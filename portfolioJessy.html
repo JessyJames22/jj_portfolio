@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JESSY JAMES | DataOps Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for professional audio feedback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <!-- Specialized Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Orbitron:wght@400..900&display=swap');
+        
+        :root {
+            --bg-dark: #090a0c;
+            --text-light: #e0e0e0;
+            --accent-wine: #800020;
+            --highlight-cyan: #4fd1c5;
+            --header-white: #ffffff;
+            --secondary-grey: #1e1f26;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace; 
+            background-color: var(--bg-dark); 
+            color: var(--text-light); 
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 700;
+            color: var(--header-white) !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover { color: var(--highlight-cyan) !important; text-shadow: 0 0 8px var(--highlight-cyan); }
+
+        /* Animated Grid Background */
+        .background-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(to right, rgba(74, 74, 74, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(74, 74, 74, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move-grid 150s linear infinite;
+        }
+
+        @keyframes move-grid { from { background-position: 0 0; } to { background-position: 100% 100%; } }
+
+        /* Section Header Decoration */
+        .section-header {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--secondary-grey);
+        }
+
+        .section-header::after {
+            content: ''; position: absolute; left: 0; bottom: -1px; width: 100px; height: 3px;
+            background-color: var(--highlight-cyan);
+            box-shadow: 0 0 12px var(--highlight-cyan);
+        }
+        
+        /* Interactive Card Styling */
+        .interactive-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--secondary-grey);
+            background-color: #121317;
+            border-radius: 4px;
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--highlight-cyan); 
+            box-shadow: 0 15px 40px rgba(79, 209, 197, 0.08);
+        }
+
+        /* Hero Text Glow */
+        .hero-wine {
+            color: var(--accent-wine);
+            text-shadow: 0 0 15px rgba(128, 0, 32, 0.8);
+            animation: breathe-glow 4s infinite ease-in-out;
+        }
+
+        @keyframes breathe-glow {
+            0%, 100% { opacity: 0.8; text-shadow: 0 0 10px rgba(128, 0, 32, 0.4); }
+            50% { opacity: 1; text-shadow: 0 0 25px rgba(128, 0, 32, 0.9); }
+        }
+
+        /* Churn Module Components */
+        .pipeline-unit {
+            border: 2px solid var(--accent-wine);
+            background-color: #0c0d10; 
+            border-radius: 4px;
+        }
+
+        #data-core {
+            border: 4px solid var(--accent-wine);
+            width: 140px; height: 140px; border-radius: 50%;
+            transition: all 0.5s ease;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(128, 0, 32, 0.05);
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent-wine);
+            letter-spacing: 2px;
+        }
+
+        #data-core.active {
+            box-shadow: 0 0 50px var(--accent-wine);
+            animation: core-pulse 1.2s infinite ease-in-out;
+            color: var(--highlight-cyan);
+            border-color: var(--highlight-cyan);
+        }
+
+        @keyframes core-pulse { 
+            0% { transform: scale(1); border-color: var(--accent-wine); }
+            50% { transform: scale(1.1); border-color: var(--highlight-cyan); opacity: 0.8; }
+            100% { transform: scale(1); border-color: var(--accent-wine); }
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid var(--highlight-cyan);
+            border-radius: 50%; width: 18px; height: 18px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Form Inputs */
+        select, input[type="range"] {
+            background: #000;
+            border: 1px solid var(--secondary-grey);
+            color: var(--text-light);
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            outline: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+        }
+
+        select:focus { border-color: var(--highlight-cyan); }
+
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-wine); color: white; padding: 14px 28px;
+            border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 11px;
+            letter-spacing: 2px; z-index: 1000; display: none;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6); border: 1px solid var(--highlight-cyan);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body>
+    <div class="background-grid"></div>
+    <div id="toast">SYSTEM: EMAIL COPIED TO CLIPBOARD</div>
+
+    <!-- Sticky Header -->
+    <header class="sticky top-0 backdrop-blur-xl border-b border-red-900/20 py-5 z-50">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-black tracking-widest text-red-700">JESSY JAMES</h1>
+            <nav class="hidden md:flex space-x-10">
+                <a href="#experience" class="nav-link text-xs tracking-[0.2em] uppercase">Experience</a>
+                <a href="#projects" class="nav-link text-xs tracking-[0.2em] uppercase">Projects</a>
+                <a href="#skills" class="nav-link text-xs tracking-[0.2em] uppercase">Skills</a>
+                <a href="#education" class="nav-link text-xs tracking-[0.2em] uppercase">Education</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-16 md:py-32">
+
+        <!-- HERO SECTION -->
+        <section class="mb-40 text-center">
+            <p class="text-xs md:text-sm tracking-[0.6em] text-cyan-400 font-bold mb-8 opacity-80">-- INITIATING PROFILE LOAD --</p>
+            <h2 class="text-6xl md:text-[10rem] leading-none font-black tracking-tighter mb-16">
+                <span class="hero-wine block mb-4 uppercase">The</span>
+                <span class="text-white block uppercase">Tech Journey</span>
+            </h2>
+            <p id="professional-summary" class="text-lg md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-16">
+                Business-oriented tech professional with 1+ year experience at <span class="text-white border-b border-red-900">Equifax</span>, specializing in data analysis and cloud systems. Strong in <span class="text-cyan-400">SQL, Excel, and Python</span>, with hands-on experience in data pipelines and enterprise data governance. Certified Google Associate Cloud Engineer.
+            </p>
+            <div class="flex flex-wrap justify-center gap-6">
+                <button onclick="copyEmail()" class="px-10 py-4 border border-red-900 text-red-600 hover:bg-red-900 hover:text-white transition-all rounded-sm text-xs font-bold uppercase tracking-[0.3em]">Email.sync</button>
+                <a href="https://www.linkedin.com/in/james-jessy" target="_blank" class="px-10 py-4 border border-gray-800 text-gray-500 hover:border-cyan-400 hover:text-cyan-400 transition-all rounded-sm text-xs font-bold uppercase tracking-[0.3em]">LinkedIn.auth</a>
+            </div>
+        </section>
+
+        <!-- AI TARGETING ENGINE -->
+        <section id="re-optimizer" class="mb-40">
+            <div class="section-header">
+                <h3 class="text-2xl font-bold tracking-widest">Targeting Engine</h3>
+            </div>
+            <div class="bg-[#0e0f12] p-8 md:p-12 border border-gray-900 rounded-sm shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <svg class="w-24 h-24 text-cyan-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                </div>
+                <h4 class="text-sm font-bold text-gray-300 mb-6 uppercase tracking-widest">Dynamic Pitch Optimizer</h4>
+                <p class="text-gray-500 mb-8 text-sm max-w-2xl font-light">Input a job title (e.g. <strong>"Financial Risk Analyst"</strong>) to generate an AI-tailored summary highlighting my specific technical synergies.</p>
+                
+                <div class="flex flex-col md:flex-row gap-4 mb-10">
+                    <input type="text" id="target-role" placeholder="INPUT TARGET ROLE..." 
+                           class="flex-grow p-5 bg-black/60 border border-gray-800 focus:border-cyan-400 outline-none text-white font-mono text-sm tracking-widest uppercase">
+                    <button onclick="optimizeRolePitch()" id="opt-btn" class="px-10 py-5 bg-red-950 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-800 transition flex items-center justify-center gap-3">
+                        <span id="button-text">Generate Pitch</span>
+                        <div id="loading-spinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+                
+                <div class="p-8 bg-black/60 border border-cyan-900/20 border-dashed rounded-sm min-h-[120px] flex items-center">
+                    <p id="pitch-output" class="text-cyan-200/70 italic text-base font-light w-full">
+                        // System standing by. Awaiting role parameters for profile calibration.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT MODULE: EXPERT CHURN SCANNER -->
+        <section id="projects" class="mb-40">
+            <div class="section-header">
+                <h3 class="text-2xl font-bold tracking-widest">Interactive Module: Logic Engine</h3>
+            </div>
+            
+            <div class="pipeline-unit p-8 md:p-12 mb-12 rounded-sm shadow-2xl">
+                <div class="mb-10">
+                    <h4 class="text-2xl font-bold text-cyan-400 mb-3">Predictive Churn Analysis v2.5</h4>
+                    <p class="text-gray-400 text-lg font-light leading-relaxed">Simulate user behavior profiles below. My expert model interprets session velocity, account status, and frequency to predict churn probability and business value.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Interaction Panel -->
+                    <div class="bg-black/40 p-8 border border-gray-800 rounded-sm space-y-6">
+                        <div>
+                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Usage Frequency</label>
+                            <select id="usage-freq">
+                                <option value="3">Daily (Heavy User)</option>
+                                <option value="2" selected>Weekly (Regular)</option>
+                                <option value="1">Monthly (Occasional)</option>
+                                <option value="0">Rarely (Idle)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Session Duration (Mins/Day)</label>
+                            <input type="range" id="session-time" min="0" max="120" value="30" class="cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-gray-600 mt-1 font-mono">
+                                <span>0 MIN</span>
+                                <span id="session-val" class="text-cyan-400 font-bold">30 MIN</span>
+                                <span>120+ MIN</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Account Status</label>
+                            <select id="acc-type">
+                                <option value="premium">Premium Subscription</option>
+                                <option value="free" selected>Free Tier</option>
+                            </select>
+                        </div>
+                        <button onclick="runScanner()" id="scan-btn" class="w-full py-4 bg-red-950 text-white text-xs font-bold uppercase tracking-[0.3em] hover:bg-red-800 transition">
+                            EXECUTE ANALYTIC SCAN
+                        </button>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="bg-[#060709] border-l-2 border-red-950 p-8 flex flex-col h-full rounded-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <div id="data-core">READY</div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Risk Verdict</p>
+                                <p id="risk-text" class="text-xl font-bold text-gray-700 tracking-tighter">---</p>
+                            </div>
+                        </div>
+                        <div id="log-output" class="font-mono text-[10px] text-gray-500 leading-loose flex-grow overflow-y-auto max-h-48 scrollbar-hide">
+                            > SYSTEM STANDING BY... WAITING FOR INPUT VECTOR.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROJECTS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="interactive-card p-10">
+                    <h5 class="text-xl font-bold text-red-800 mb-5 tracking-widest uppercase">Campus Pay</h5>
+                    <p class="text-sm text-gray-400 mb-8 font-light text-justify leading-relaxed">RFID-enabled payment system with a cloud-based MySQL pipeline. Analyzed spending patterns and user behavior logs to generate institutional behavior reports.</p>
+                    <div class="flex gap-4 text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">
+                        <span>MySQL</span><span>Analytics</span><span>GCP</span>
+                    </div>
+                </div>
+                <div class="interactive-card p-10">
+                    <h5 class="text-xl font-bold text-red-800 mb-5 tracking-widest uppercase">Docker ML-Ops</h5>
+                    <p class="text-sm text-gray-400 mb-8 font-light text-justify leading-relaxed">End-to-end Machine Learning deployment using Flask API and Docker. Automated CI/CD workflows to ensure environment parity and predictive scalability.</p>
+                    <div class="flex gap-4 text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">
+                        <span>Docker</span><span>Python</span><span>ML-Ops</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="experience" class="mb-40">
+            <div class="section-header">
+                <h3 class="text-2xl font-bold tracking-widest">System Experience</h3>
+            </div>
+            <div class="interactive-card p-10 rounded-sm">
+                <div class="flex flex-col lg:flex-row justify-between mb-10 gap-6">
+                    <div>
+                        <h4 class="text-3xl font-bold text-white mb-2">Software Engineer</h4>
+                        <p class="text-red-700 font-bold uppercase text-sm tracking-widest mb-2">Equifax | Data Fabrics Team</p>
+                    </div>
+                    <div class="text-gray-400 font-mono text-sm border-l-2 border-red-900/40 pl-6">
+                        <p class="mb-1">FTE: JULY 2025 - PRESENT</p>
+                        <p>INTERN: FEB 2025 - JUNE 2025</p>
+                    </div>
+                </div>
+                <ul class="space-y-6 text-gray-400 font-light text-lg">
+                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">01/</span> <span>Specialized in enterprise <strong>Data Management</strong> and financial data governance within the Equifax Data Fabrics ecosystem.</span></li>
+                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">02/</span> <span>Implemented CI/CD and automated release cycles using <strong>Jenkins</strong>, demonstrating master-level DataOps proficiency.</span></li>
+                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">03/</span> <span>Developed Java back-end and Angular front-end features for end-to-end dataset processing and visualization.</span></li>
+                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">04/</span> <span>Validated stability and adherence to high-compliance standards in a regulated corporate environment.</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SKILLS MATRIX -->
+        <section id="skills" class="mb-40">
+            <div class="section-header">
+                <h3 class="text-2xl font-bold tracking-widest">Capability Matrix</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="bg-[#121317] p-8 border border-gray-800">
+                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Analysis</p>
+                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">SQL / Excel / Modeling / Requirements</p>
+                </div>
+                <div class="bg-[#121317] p-8 border border-gray-800">
+                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Visualization</p>
+                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Tableau / Power BI / Reporting</p>
+                </div>
+                <div class="bg-[#121317] p-8 border border-gray-800">
+                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Cloud/Code</p>
+                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Python / GCP (ACE) / Java / Docker</p>
+                </div>
+                <div class="bg-[#121317] p-8 border border-gray-800">
+                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Infrastructure</p>
+                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Jenkins / CI-CD / Agile / DevOps</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section id="education" class="mb-40">
+            <div class="section-header">
+                <h3 class="text-2xl font-bold tracking-widest">Education & Credentials</h3>
+            </div>
+            <div class="bg-[#0e0f12] p-10 border border-gray-900 rounded-sm shadow-xl relative overflow-hidden">
+                <div class="mb-10">
+                    <h4 class="text-2xl font-bold text-white mb-2 tracking-widest">B.Tech. in CSE - Big Data & Cloud Engineering</h4>
+                    <p class="text-red-700 font-bold text-sm tracking-widest uppercase mb-1">MIT ADT University, Pune</p>
+                    <p class="text-gray-500 text-sm font-mono tracking-widest">CGPA: 8.44 | GRADUATED: 2025</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-gray-800/50">
+                    <div>
+                        <p class="text-cyan-400 font-bold text-[10px] uppercase mb-6 tracking-widest">Verified Credentials</p>
+                        <ul class="text-xs text-gray-500 space-y-4 font-mono uppercase">
+                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> Google Associate Cloud Engineer (ACE)</li>
+                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> Java Full Stack Development (Unstop)</li>
+                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> NCC 'C' Certificate (Grade A)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="text-cyan-400 font-bold text-[10px] uppercase mb-6 tracking-widest">Protocols & Interests</p>
+                        <p class="text-xs text-gray-400 mb-4 font-mono"><span class="text-red-900">LANGUAGES:</span> ENGLISH, HINDI, MALAYALAM, MARATHI</p>
+                        <p class="text-xs text-gray-400 font-mono"><span class="text-red-900">INTERESTS:</span> POSTER MAKING, EMBROIDERY, CULTURAL AWARENESS</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center pt-24 pb-12 border-t border-red-900/20">
+            <h3 class="text-2xl font-black tracking-[0.6em] text-red-900 uppercase mb-8">INITIATE CONTACT</h3>
+            <p class="text-gray-500 font-mono text-sm mb-16 tracking-widest">jessyjamess39@gmail.com</p>
+            <div class="flex justify-center gap-16 text-[11px] font-bold tracking-[0.4em] text-gray-500 uppercase">
+                <a href="https://www.linkedin.com/in/james-jessy" target="_blank" class="hover:text-cyan-400 transition-colors">LinkedIn</a>
+                <button onclick="copyEmail()" class="hover:text-cyan-400 transition-colors cursor-pointer uppercase">Email.Auth</button>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        const apiKey = ""; // Built-in environment provides key
+        const logArea = document.getElementById('log-output');
+
+        document.getElementById('session-time').addEventListener('input', (e) => {
+            document.getElementById('session-val').textContent = e.target.value + " MIN";
+        });
+
+        async function log(msg, color = "text-gray-500") {
+            const p = document.createElement('p');
+            p.className = `${color} mb-1 flex gap-2`;
+            p.innerHTML = `<span class="text-red-950 font-bold">>></span> <span>${msg}</span>`;
+            logArea.appendChild(p);
+            logArea.scrollTop = logArea.scrollHeight;
+            synth.triggerAttackRelease(300 + Math.random() * 200, "32n");
+            await new Promise(r => setTimeout(r, 80));
+        }
+
+        async function runScanner() {
+            const freq = parseInt(document.getElementById('usage-freq').value);
+            const time = parseInt(document.getElementById('session-time').value);
+            const type = document.getElementById('acc-type').value;
+            const btn = document.getElementById('scan-btn');
+            const core = document.getElementById('data-core');
+            const riskText = document.getElementById('risk-text');
+
+            btn.disabled = true;
+            logArea.innerHTML = "";
+            core.classList.add('active');
+            core.textContent = "SCANNING";
+            riskText.textContent = "CALCULATING...";
+            riskText.className = "text-xl font-bold text-gray-500";
+            
+            await Tone.start();
+            await log("SYNCING BEHAVIORAL NODES...");
+            await log(`VECTOR_MAP: FREQ(${freq}) TIME(${time}) TIER(${type.toUpperCase()})`);
+            
+            await new Promise(r => setTimeout(r, 1000));
+            
+            let risk = ""; let color = ""; let logMsg = "";
+            
+            /* --- EXPERT ANALYTIC LOGIC MATRIX --- */
+            
+            // 1. ANOMALY: The Ghost Premium (Daily Frequency but Zero/Least Session Mins)
+            if (freq >= 2 && time <= 5 && type === 'premium') {
+                risk = "ZOMBIE PREM"; color = "text-orange-600";
+                logMsg = "ANOMALY: High login frequency with zero session depth. Flagging as 'Ghost User'.";
+            } 
+            // 2. EXTREME: Total Inactivity
+            else if (freq === 0 && time <= 10) {
+                risk = "TOTAL LOSS"; color = "text-red-600";
+                logMsg = "CRITICAL: Account inactive. High churn probability detected.";
+            } 
+            // 3. UPSELL: High Value Free (Expert Insight)
+            else if (type === 'free' && (freq >= 2 || time >= 40)) {
+                risk = "UPSELL OP"; color = "text-blue-400";
+                logMsg = "INSIGHT: High-utility free user found. Target for Premium migration strategy.";
+            }
+            // 4. POWER: High Value Premium
+            else if (freq >= 3 && time >= 45) {
+                risk = "POWER USER"; color = "text-green-500";
+                logMsg = "STATUS: Maximum engagement tier. Loyalty probability: 99.8%.";
+            } 
+            // 5. THE DEEP ENGAGER: (The Shinu Edge Case) Monthly + High Time
+            else if (freq <= 1 && time >= 60) {
+                risk = "DEEP ENGAGER"; color = "text-cyan-400";
+                logMsg = "INSIGHT: High depth / Low frequency pattern. User displays focused interaction.";
+            }
+            // 6. RISK: Idle Premium (Pays but uses monthly)
+            else if (type === 'premium' && freq <= 1) {
+                risk = "IDLE PREM"; color = "text-orange-500";
+                logMsg = "WARNING: Premium tier under-utilization. Subject to immediate churn.";
+            }
+            // 7. STABLE: Standard Premium
+            else if (type === 'premium') {
+                risk = "LOYAL USER"; color = "text-cyan-400";
+                logMsg = "STATUS: Stable engagement trend within paid ecosystem.";
+            }
+            // 8. DEFAULT: Standard Free
+            else {
+                risk = "MODERATE RISK"; color = "text-yellow-500";
+                logMsg = "STATUS: Standard baseline free-tier engagement.";
+            }
+
+            await log(logMsg, "text-cyan-400");
+            await log("ANALYTIC SEQUENCE COMPLETE.", "text-white");
+            
+            riskText.textContent = risk;
+            riskText.className = `text-xl font-bold ${color} shadow-lg scale-110 transition-all`;
+            
+            core.classList.remove('active');
+            core.textContent = "READY";
+            btn.disabled = false;
+        }
+
+        async function optimizeRolePitch() {
+            const role = document.getElementById('target-role').value.trim();
+            const output = document.getElementById('pitch-output');
+            const btn = document.getElementById('opt-btn');
+            const spinner = document.getElementById('loading-spinner');
+            if(!role) return;
+            btn.disabled = true; spinner.classList.remove('hidden');
+            output.textContent = "SYNCING PROFILE DATA WITH GEMINI CORE...";
+            const systemPrompt = "Expert recruitment consultant for Data Analysts. Rewrite summary for job role, max 3 sentences. Gibberish check: if nonsense, say 'SYSTEM ERROR: INVALID PARAMETERS.'";
+            const profile = document.getElementById('professional-summary').textContent;
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Role: ${role}\nProfile: ${profile}` }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+                const data = await res.json();
+                output.textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Calibration failed.";
+                synth.triggerAttackRelease(["C5", "E5", "G5"], "8n");
+            } catch (e) {
+                output.textContent = "CONNECTION ERROR: RETRY UPLINK.";
+            } finally {
+                btn.disabled = false; spinner.classList.add('hidden');
+            }
+        }
+
+        function copyEmail() {
+            const email = "jessyjamess39@gmail.com";
+            const textArea = document.createElement("textarea");
+            textArea.value = email;
+            textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            textArea.focus(); textArea.select();
+            try {
+                if (document.execCommand('copy')) {
+                    const toast = document.getElementById('toast');
+                    toast.style.display = 'block';
+                    synth.triggerAttackRelease(["C5", "E5", "G5"], "8n");
+                    setTimeout(() => toast.style.display = 'none', 3000);
+                }
+            } catch (err) {}
+            document.body.removeChild(textArea);
+            setTimeout(() => { window.location.href = `mailto:${email}`; }, 100);
+        }
+
+        window.onload = () => log("AWAITING BEHAVIORAL PARAMETERS FOR ANALYTIC SCAN...");
+    </script>
+</body>
+</html>
