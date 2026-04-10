@@ -6,415 +6,399 @@
     <title>JESSY JAMES | DataOps Portfolio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js for professional audio feedback -->
+    <!-- Tone.js for premium audio feedback -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-    <!-- Specialized Fonts -->
+    <!-- Framer Motion equivalent for smooth reveal (using simple Intersection Observer) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Orbitron:wght@400..900&display=swap');
         
         :root {
-            --bg-dark: #090a0c;
-            --text-light: #e0e0e0;
+            --bg-dark: #07080a;
+            --text-main: #ffffff;    
+            --text-dim: #9ca3af;     
             --accent-wine: #800020;
             --highlight-cyan: #4fd1c5;
-            --header-white: #ffffff;
-            --secondary-grey: #1e1f26;
+            --glass: rgba(18, 20, 25, 0.7);
         }
 
         body {
             font-family: 'Fira Code', monospace; 
             background-color: var(--bg-dark); 
-            color: var(--text-light); 
-            line-height: 1.6;
+            color: var(--text-main); 
+            line-height: 1.8;
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-        }
 
-        .nav-link {
-            font-family: 'Orbitron', sans-serif; 
-            font-weight: 700;
-            color: var(--header-white) !important;
-            transition: all 0.3s ease;
-        }
+        /* HUD Typography */
+        h1, h2, h3, h4, h5, h6 { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+        .cyber-text { color: var(--highlight-cyan); text-shadow: 0 0 10px rgba(79, 209, 197, 0.4); }
 
-        .nav-link:hover { color: var(--highlight-cyan) !important; text-shadow: 0 0 8px var(--highlight-cyan); }
+        /* Smooth Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Animated Grid Background */
+        /* Animated HUD Grid */
         .background-grid {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background-image: linear-gradient(to right, rgba(74, 74, 74, 0.05) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(74, 74, 74, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: move-grid 150s linear infinite;
+            background-image: 
+                linear-gradient(to right, rgba(128, 0, 32, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 0, 32, 0.05) 1px, transparent 1px);
+            background-size: 80px 80px;
+            animation: move-grid 100s linear infinite;
         }
+        @keyframes move-grid { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-        @keyframes move-grid { from { background-position: 0 0; } to { background-position: 100% 100%; } }
-
-        /* Section Header Decoration */
-        .section-header {
-            position: relative;
-            padding-bottom: 0.5rem;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid var(--secondary-grey);
+        /* Scanline Effect */
+        .scanline {
+            width: 100%; height: 100px;
+            z-index: 10; position: fixed; top: 0; left: 0;
+            background: linear-gradient(0deg, rgba(79, 209, 197, 0) 0%, rgba(79, 209, 197, 0.03) 50%, rgba(79, 209, 197, 0) 100%);
+            animation: scan 8s linear infinite; pointer-events: none;
         }
+        @keyframes scan { from { top: -100px; } to { top: 100vh; } }
 
+        /* Section Ornament */
         .section-header::after {
-            content: ''; position: absolute; left: 0; bottom: -1px; width: 100px; height: 3px;
-            background-color: var(--highlight-cyan);
-            box-shadow: 0 0 12px var(--highlight-cyan);
+            content: ''; position: absolute; left: 0; bottom: -5px; width: 150px; height: 2px;
+            background: linear-gradient(90deg, var(--highlight-cyan), transparent);
+            box-shadow: 0 0 15px var(--highlight-cyan);
         }
         
-        /* Interactive Card Styling */
-        .interactive-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--secondary-grey);
-            background-color: #121317;
-            border-radius: 4px;
+        /* Premium HUD Cards */
+        .hud-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-wine);
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .hud-card:hover {
+            border-left-color: var(--highlight-cyan);
+            background: rgba(18, 20, 25, 0.9);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .hud-card::before {
+            content: ''; position: absolute; top: 0; right: 0; 
+            width: 40px; height: 40px;
+            background: linear-gradient(45deg, transparent 50%, rgba(128, 0, 32, 0.1) 50%);
         }
 
-        .interactive-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--highlight-cyan); 
-            box-shadow: 0 15px 40px rgba(79, 209, 197, 0.08);
-        }
-
-        /* Hero Text Glow */
+        /* Hero Glitch Anim */
         .hero-wine {
             color: var(--accent-wine);
-            text-shadow: 0 0 15px rgba(128, 0, 32, 0.8);
-            animation: breathe-glow 4s infinite ease-in-out;
+            text-shadow: 0 0 20px rgba(128, 0, 32, 0.6);
+            animation: breathe 3s infinite ease-in-out;
         }
+        @keyframes breathe { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.02); } }
 
-        @keyframes breathe-glow {
-            0%, 100% { opacity: 0.8; text-shadow: 0 0 10px rgba(128, 0, 32, 0.4); }
-            50% { opacity: 1; text-shadow: 0 0 25px rgba(128, 0, 32, 0.9); }
+        /* Risk Gauge */
+        .gauge-container {
+            width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; overflow: hidden;
+            margin-top: 15px; border: 1px solid #333;
         }
+        #risk-bar { width: 0%; height: 100%; transition: all 1.5s cubic-bezier(0.1, 0.9, 0.2, 1); }
 
-        /* Churn Module Components */
-        .pipeline-unit {
-            border: 2px solid var(--accent-wine);
-            background-color: #0c0d10; 
-            border-radius: 4px;
-        }
-
-        #data-core {
-            border: 4px solid var(--accent-wine);
-            width: 140px; height: 140px; border-radius: 50%;
-            transition: all 0.5s ease;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(128, 0, 32, 0.05);
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--accent-wine);
-            letter-spacing: 2px;
-        }
-
-        #data-core.active {
-            box-shadow: 0 0 50px var(--accent-wine);
-            animation: core-pulse 1.2s infinite ease-in-out;
-            color: var(--highlight-cyan);
-            border-color: var(--highlight-cyan);
-        }
-
-        @keyframes core-pulse { 
-            0% { transform: scale(1); border-color: var(--accent-wine); }
-            50% { transform: scale(1.1); border-color: var(--highlight-cyan); opacity: 0.8; }
-            100% { transform: scale(1); border-color: var(--accent-wine); }
-        }
-
-        .spinner {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top: 2px solid var(--highlight-cyan);
-            border-radius: 50%; width: 18px; height: 18px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Form Inputs */
+        /* Inputs Custom */
         select, input[type="range"] {
-            background: #000;
-            border: 1px solid var(--secondary-grey);
-            color: var(--text-light);
-            padding: 10px;
-            border-radius: 4px;
-            width: 100%;
-            outline: none;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
+            background: #000; border: 1px solid #333; color: #fff;
+            padding: 12px; border-radius: 4px; outline: none; transition: 0.3s;
         }
-
-        select:focus { border-color: var(--highlight-cyan); }
+        select:focus { border-color: var(--highlight-cyan); box-shadow: 0 0 10px rgba(79, 209, 197, 0.2); }
 
         #toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-wine); color: white; padding: 14px 28px;
-            border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 11px;
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-wine); color: white; padding: 16px 32px;
+            border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px;
             letter-spacing: 2px; z-index: 1000; display: none;
-            box-shadow: 0 0 30px rgba(0,0,0,0.6); border: 1px solid var(--highlight-cyan);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 1px solid var(--highlight-cyan);
         }
 
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .typing::after { content: '|'; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 
 <body>
     <div class="background-grid"></div>
-    <div id="toast">SYSTEM: EMAIL COPIED TO CLIPBOARD</div>
+    <div class="scanline"></div>
+    <div id="toast">SYSTEM: DATA_SYNC_COMPLETE</div>
 
-    <!-- Sticky Header -->
-    <header class="sticky top-0 backdrop-blur-xl border-b border-red-900/20 py-5 z-50">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-black tracking-widest text-red-700">JESSY JAMES</h1>
-            <nav class="hidden md:flex space-x-10">
-                <a href="#experience" class="nav-link text-xs tracking-[0.2em] uppercase">Experience</a>
-                <a href="#projects" class="nav-link text-xs tracking-[0.2em] uppercase">Projects</a>
-                <a href="#skills" class="nav-link text-xs tracking-[0.2em] uppercase">Skills</a>
-                <a href="#education" class="nav-link text-xs tracking-[0.2em] uppercase">Education</a>
+    <!-- HUD Header -->
+    <header class="fixed top-0 w-full backdrop-blur-2xl border-b border-red-900/30 py-6 z-50">
+        <div class="max-w-7xl mx-auto px-10 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black text-[#800020] mb-0 tracking-widest">JESSY JAMES</h1>
+                <p class="text-[9px] text-cyan-500 font-bold tracking-[0.4em] mt-1 opacity-80">STT: DATAOPS_ENG_039</p>
+            </div>
+            <nav class="hidden lg:flex space-x-12">
+                <a href="#projects" class="hover:text-cyan-400 transition text-xs font-bold uppercase tracking-widest">Projects</a>
+                <a href="#experience" class="hover:text-cyan-400 transition text-xs font-bold uppercase tracking-widest">Experience</a>
+                <a href="#skills" class="hover:text-cyan-400 transition text-xs font-bold uppercase tracking-widest">Skills</a>
+                <a href="#education" class="hover:text-cyan-400 transition text-xs font-bold uppercase tracking-widest">Education</a>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 py-16 md:py-32">
+    <main class="max-w-7xl mx-auto px-10 pt-48 pb-32">
 
-        <!-- HERO SECTION -->
-        <section class="mb-40 text-center">
-            <p class="text-xs md:text-sm tracking-[0.6em] text-cyan-400 font-bold mb-8 opacity-80">-- INITIATING PROFILE LOAD --</p>
-            <h2 class="text-6xl md:text-[10rem] leading-none font-black tracking-tighter mb-16">
-                <span class="hero-wine block mb-4 uppercase">The</span>
-                <span class="text-white block uppercase">Tech Journey</span>
+        <!-- IMMERSIVE HERO -->
+        <section class="mb-64 text-center reveal">
+            <div class="inline-block border border-cyan-500/30 px-6 py-2 mb-12 rounded-full">
+                <span class="text-[10px] font-black tracking-[0.5em] text-cyan-400 uppercase">Status: Initializing Profile Upload</span>
+            </div>
+            <h2 class="text-8xl lg:text-[13rem] leading-[0.8] font-black tracking-tighter mb-20 relative">
+                <span class="hero-wine block mb-6">THE</span>
+                <span class="text-white block">TECH JOURNEY</span>
             </h2>
-            <p id="professional-summary" class="text-lg md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-16">
-                Business-oriented tech professional with 1+ year experience at <span class="text-white border-b border-red-900">Equifax</span>, specializing in data analysis and cloud systems. Strong in <span class="text-cyan-400">SQL, Excel, and Python</span>, with hands-on experience in data pipelines and enterprise data governance. Certified Google Associate Cloud Engineer.
-            </p>
-            <div class="flex flex-wrap justify-center gap-6">
-                <button onclick="copyEmail()" class="px-10 py-4 border border-red-900 text-red-600 hover:bg-red-900 hover:text-white transition-all rounded-sm text-xs font-bold uppercase tracking-[0.3em]">Email.sync</button>
-                <a href="https://www.linkedin.com/in/james-jessy" target="_blank" class="px-10 py-4 border border-gray-800 text-gray-500 hover:border-cyan-400 hover:text-cyan-400 transition-all rounded-sm text-xs font-bold uppercase tracking-[0.3em]">LinkedIn.auth</a>
+            <div class="max-w-4xl mx-auto mb-20">
+                <p id="professional-summary" class="text-2xl lg:text-4xl text-gray-300 font-light leading-relaxed">
+                    Senior-level analyst mindset with <span class="text-white font-medium border-b-2 border-red-900">1+ year at Equifax</span>. Specialized in bridging SQL architecture, Cloud pipelines, and Business Strategy. Certified Google Cloud Engineer.
+                </p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-10">
+                <button onclick="copyEmail()" class="px-16 py-6 bg-red-950/20 border-2 border-red-900 text-red-500 hover:bg-red-900 hover:text-white transition-all text-sm font-black uppercase tracking-[0.5em] shadow-[0_0_30px_rgba(128,0,32,0.3)]">
+                    Link.Mail
+                </button>
+                <a href="https://www.linkedin.com/in/james-jessy" target="_blank" class="px-16 py-6 border-2 border-gray-700 text-gray-400 hover:border-cyan-400 hover:text-cyan-400 transition-all text-sm font-black uppercase tracking-[0.5em]">
+                    Link.LinkedIn
+                </a>
             </div>
         </section>
 
-        <!-- AI TARGETING ENGINE -->
-        <section id="re-optimizer" class="mb-40">
-            <div class="section-header">
-                <h3 class="text-2xl font-bold tracking-widest">Targeting Engine</h3>
+        <!-- NEURAL TARGETING ENGINE -->
+        <section id="re-optimizer" class="mb-64 reveal">
+            <div class="relative section-header mb-16">
+                <h3 class="text-3xl font-black uppercase tracking-widest">Neural Targeting Core</h3>
             </div>
-            <div class="bg-[#0e0f12] p-8 md:p-12 border border-gray-900 rounded-sm shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <svg class="w-24 h-24 text-cyan-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-                </div>
-                <h4 class="text-sm font-bold text-gray-300 mb-6 uppercase tracking-widest">Dynamic Pitch Optimizer</h4>
-                <p class="text-gray-500 mb-8 text-sm max-w-2xl font-light">Input a job title (e.g. <strong>"Financial Risk Analyst"</strong>) to generate an AI-tailored summary highlighting my specific technical synergies.</p>
-                
-                <div class="flex flex-col md:flex-row gap-4 mb-10">
-                    <input type="text" id="target-role" placeholder="INPUT TARGET ROLE..." 
-                           class="flex-grow p-5 bg-black/60 border border-gray-800 focus:border-cyan-400 outline-none text-white font-mono text-sm tracking-widest uppercase">
-                    <button onclick="optimizeRolePitch()" id="opt-btn" class="px-10 py-5 bg-red-950 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-800 transition flex items-center justify-center gap-3">
-                        <span id="button-text">Generate Pitch</span>
-                        <div id="loading-spinner" class="spinner hidden"></div>
-                    </button>
-                </div>
-                
-                <div class="p-8 bg-black/60 border border-cyan-900/20 border-dashed rounded-sm min-h-[120px] flex items-center">
-                    <p id="pitch-output" class="text-cyan-200/70 italic text-base font-light w-full">
-                        // System standing by. Awaiting role parameters for profile calibration.
-                    </p>
+            <div class="hud-card p-12 lg:p-20 shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h4 class="text-base font-bold text-cyan-400 mb-6 uppercase tracking-[0.3em]">AI Profile Recalibration</h4>
+                        <p class="text-xl text-gray-400 mb-10 font-light leading-relaxed">Input a specific corporate role. The Gemini engine will parse my background at Equifax to generate a targeted technical pitch.</p>
+                        <div class="flex flex-col gap-6">
+                            <input type="text" id="target-role" placeholder="ENTER TARGET POSITION..." 
+                                   class="p-6 bg-black border-2 border-gray-800 focus:border-cyan-400 outline-none text-white font-mono text-xl tracking-widest">
+                            <button onclick="optimizeRolePitch()" id="opt-btn" class="w-full py-6 bg-red-950 text-white text-sm font-black uppercase tracking-[0.3em] hover:bg-red-800 transition shadow-lg flex items-center justify-center gap-4">
+                                <span id="button-text">Recalibrate Engine</span>
+                                <div id="loading-spinner" class="spinner hidden"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-black/60 border-2 border-cyan-900/20 p-10 min-h-[300px] flex items-center relative">
+                        <div class="absolute top-4 left-4 text-[9px] text-cyan-900 font-mono">NEURAL_OUTPUT_STREAM</div>
+                        <p id="pitch-output" class="text-cyan-100 italic text-xl font-light leading-loose w-full">
+                            // Waiting for role parameters...
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- PROJECT MODULE: EXPERT CHURN SCANNER -->
-        <section id="projects" class="mb-40">
-            <div class="section-header">
-                <h3 class="text-2xl font-bold tracking-widest">Interactive Module: Logic Engine</h3>
+        <!-- LOGIC ENGINE: CHURN HUD -->
+        <section id="projects" class="mb-64 reveal">
+            <div class="relative section-header mb-16">
+                <h3 class="text-3xl font-black uppercase tracking-widest">Strategic Logic Module</h3>
             </div>
             
-            <div class="pipeline-unit p-8 md:p-12 mb-12 rounded-sm shadow-2xl">
-                <div class="mb-10">
-                    <h4 class="text-2xl font-bold text-cyan-400 mb-3">Predictive Churn Analysis v2.5</h4>
-                    <p class="text-gray-400 text-lg font-light leading-relaxed">Simulate user behavior profiles below. My expert model interprets session velocity, account status, and frequency to predict churn probability and business value.</p>
+            <div class="pipeline-unit p-10 lg:p-20 mb-20 shadow-2xl">
+                <div class="mb-16">
+                    <h4 class="text-4xl font-bold text-cyan-400 mb-6">Churn Forecaster v2.5</h4>
+                    <p class="text-2xl text-gray-300 font-light max-w-4xl">A behavioral risk simulator. Using multi-vector analysis (Tier, Duration, frequency) to identify at-risk accounts before termination.</p>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Interaction Panel -->
-                    <div class="bg-black/40 p-8 border border-gray-800 rounded-sm space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                    <!-- Dashboard Inputs -->
+                    <div class="bg-black/40 p-12 border border-gray-800 rounded-sm space-y-10">
                         <div>
-                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Usage Frequency</label>
-                            <select id="usage-freq">
-                                <option value="3">Daily (Heavy User)</option>
-                                <option value="2" selected>Weekly (Regular)</option>
-                                <option value="1">Monthly (Occasional)</option>
-                                <option value="0">Rarely (Idle)</option>
+                            <label class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.4em] block mb-4">Engagement frequency</label>
+                            <select id="usage-freq" class="w-full">
+                                <option value="3">DAILY (CORE USER)</option>
+                                <option value="2" selected>WEEKLY (REGULAR)</option>
+                                <option value="1">MONTHLY (OCCASIONAL)</option>
+                                <option value="0">RARELY (STAGNANT)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Session Duration (Mins/Day)</label>
-                            <input type="range" id="session-time" min="0" max="120" value="30" class="cursor-pointer">
-                            <div class="flex justify-between text-[10px] text-gray-600 mt-1 font-mono">
+                            <label class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.4em] block mb-4">Session Depth (Minutes)</label>
+                            <input type="range" id="session-time" min="0" max="120" value="30" class="w-full cursor-pointer">
+                            <div class="flex justify-between text-xs text-gray-500 mt-2 font-mono">
                                 <span>0 MIN</span>
-                                <span id="session-val" class="text-cyan-400 font-bold">30 MIN</span>
+                                <span id="session-val" class="text-white font-bold">30 MIN</span>
                                 <span>120+ MIN</span>
                             </div>
                         </div>
                         <div>
-                            <label class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-2">Account Status</label>
-                            <select id="acc-type">
-                                <option value="premium">Premium Subscription</option>
-                                <option value="free" selected>Free Tier</option>
+                            <label class="text-[10px] text-cyan-500 font-black uppercase tracking-[0.4em] block mb-4">Subscription Protocol</label>
+                            <select id="acc-type" class="w-full">
+                                <option value="premium">PREMIUM (ACTIVE REVENUE)</option>
+                                <option value="free" selected>FREE (AD-SUPPORTED)</option>
                             </select>
                         </div>
-                        <button onclick="runScanner()" id="scan-btn" class="w-full py-4 bg-red-950 text-white text-xs font-bold uppercase tracking-[0.3em] hover:bg-red-800 transition">
-                            EXECUTE ANALYTIC SCAN
+                        <button onclick="runScanner()" id="scan-btn" class="w-full py-8 bg-red-950 text-white text-sm font-black uppercase tracking-[0.4em] hover:bg-red-800 transition shadow-[0_0_40px_rgba(128,0,32,0.4)]">
+                            INITIATE SCAN
                         </button>
                     </div>
 
-                    <!-- Output Panel -->
-                    <div class="bg-[#060709] border-l-2 border-red-950 p-8 flex flex-col h-full rounded-sm">
-                        <div class="flex justify-between items-center mb-6">
+                    <!-- Dashboard Visualizer -->
+                    <div class="bg-[#050608] border-l-4 border-red-950 p-12 flex flex-col justify-between h-full relative">
+                        <div class="flex justify-between items-start mb-12">
                             <div id="data-core">READY</div>
                             <div class="text-right">
-                                <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Risk Verdict</p>
-                                <p id="risk-text" class="text-xl font-bold text-gray-700 tracking-tighter">---</p>
+                                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Calculated Verdict</p>
+                                <p id="risk-text" class="text-4xl font-black text-gray-800 tracking-tighter">WAITING...</p>
+                                <div class="gauge-container"><div id="risk-bar"></div></div>
                             </div>
                         </div>
-                        <div id="log-output" class="font-mono text-[10px] text-gray-500 leading-loose flex-grow overflow-y-auto max-h-48 scrollbar-hide">
-                            > SYSTEM STANDING BY... WAITING FOR INPUT VECTOR.
+                        <div id="log-output" class="font-mono text-sm text-gray-400 leading-relaxed overflow-y-auto max-h-64 scrollbar-hide">
+                            > SYSTEM IDLE. AWAITING INPUT VECTOR...
                         </div>
+                        <div class="absolute bottom-4 right-4 text-[8px] text-gray-800 font-mono uppercase">Node: EFX_LOG_PARSER_V3</div>
                     </div>
                 </div>
             </div>
 
             <!-- PROJECTS GRID -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="interactive-card p-10">
-                    <h5 class="text-xl font-bold text-red-800 mb-5 tracking-widest uppercase">Campus Pay</h5>
-                    <p class="text-sm text-gray-400 mb-8 font-light text-justify leading-relaxed">RFID-enabled payment system with a cloud-based MySQL pipeline. Analyzed spending patterns and user behavior logs to generate institutional behavior reports.</p>
-                    <div class="flex gap-4 text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">
-                        <span>MySQL</span><span>Analytics</span><span>GCP</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div class="hud-card p-12">
+                    <h5 class="text-2xl font-black text-red-800 mb-8 uppercase tracking-widest">Campus Pay</h5>
+                    <p class="text-lg text-gray-400 mb-12 font-light leading-relaxed">RFID-enabled financial pipeline. Leveraging cloud-based MySQL to analyze spending behavior and generate institutional usage reports.</p>
+                    <div class="flex gap-6 text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">
+                        <span class="border border-cyan-900/50 px-3 py-1">BigQuery</span>
+                        <span class="border border-cyan-900/50 px-3 py-1">GCP Architecture</span>
                     </div>
                 </div>
-                <div class="interactive-card p-10">
-                    <h5 class="text-xl font-bold text-red-800 mb-5 tracking-widest uppercase">Docker ML-Ops</h5>
-                    <p class="text-sm text-gray-400 mb-8 font-light text-justify leading-relaxed">End-to-end Machine Learning deployment using Flask API and Docker. Automated CI/CD workflows to ensure environment parity and predictive scalability.</p>
-                    <div class="flex gap-4 text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">
-                        <span>Docker</span><span>Python</span><span>ML-Ops</span>
+                <div class="hud-card p-12">
+                    <h5 class="text-2xl font-black text-red-800 mb-8 uppercase tracking-widest">Docker ML-Ops</h5>
+                    <p class="text-lg text-gray-400 mb-12 font-light leading-relaxed">Deployment of predictive analytics via Flask API. Using containerization to ensure scalability and model parity across environments.</p>
+                    <div class="flex gap-6 text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em]">
+                        <span class="border border-cyan-900/50 px-3 py-1">Containerization</span>
+                        <span class="border border-cyan-900/50 px-3 py-1">DevOps Pipeline</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- EXPERIENCE -->
-        <section id="experience" class="mb-40">
-            <div class="section-header">
-                <h3 class="text-2xl font-bold tracking-widest">System Experience</h3>
+        <!-- PROFESSIONAL EXPERIENCE: EFX -->
+        <section id="experience" class="mb-64 reveal">
+            <div class="relative section-header mb-16">
+                <h3 class="text-3xl font-black uppercase tracking-widest">Core Tenure</h3>
             </div>
-            <div class="interactive-card p-10 rounded-sm">
-                <div class="flex flex-col lg:flex-row justify-between mb-10 gap-6">
+            <div class="hud-card p-12 lg:p-20" onclick="window.open('https://www.equifax.com/', '_blank')">
+                <div class="flex flex-col lg:flex-row justify-between mb-16 gap-10">
                     <div>
-                        <h4 class="text-3xl font-bold text-white mb-2">Software Engineer</h4>
-                        <p class="text-red-700 font-bold uppercase text-sm tracking-widest mb-2">Equifax | Data Fabrics Team</p>
+                        <p class="text-cyan-500 font-black text-xs tracking-[0.5em] mb-4 uppercase">Institution: EQUIFAX INC.</p>
+                        <h4 class="text-5xl lg:text-6xl font-black text-white mb-6">Software Engineer</h4>
+                        <p class="text-red-700 font-bold uppercase text-xl tracking-[0.2em] mb-4">Data Fabrics Team</p>
                     </div>
-                    <div class="text-gray-400 font-mono text-sm border-l-2 border-red-900/40 pl-6">
-                        <p class="mb-1">FTE: JULY 2025 - PRESENT</p>
-                        <p>INTERN: FEB 2025 - JUNE 2025</p>
+                    <div class="lg:text-right border-l-4 lg:border-l-0 lg:border-r-4 border-red-900/40 px-10">
+                        <p class="text-white font-mono text-xl mb-2">FTE: JULY 2025 - PRESENT</p>
+                        <p class="text-gray-500 font-mono text-lg italic">INT: FEB 2025 - JUNE 2025</p>
                     </div>
                 </div>
-                <ul class="space-y-6 text-gray-400 font-light text-lg">
-                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">01/</span> <span>Specialized in enterprise <strong>Data Management</strong> and financial data governance within the Equifax Data Fabrics ecosystem.</span></li>
-                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">02/</span> <span>Implemented CI/CD and automated release cycles using <strong>Jenkins</strong>, demonstrating master-level DataOps proficiency.</span></li>
-                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">03/</span> <span>Developed Java back-end and Angular front-end features for end-to-end dataset processing and visualization.</span></li>
-                    <li class="flex gap-4"><span class="text-cyan-400 font-bold">04/</span> <span>Validated stability and adherence to high-compliance standards in a regulated corporate environment.</span></li>
+                <ul class="space-y-12 text-gray-300 font-light text-xl">
+                    <li class="flex gap-8 items-start">
+                        <div class="w-10 h-[2px] bg-cyan-400 mt-4"></div>
+                        <span>Specialized in <strong>Enterprise Data Governance</strong> and financial management systems within the Data Fabrics ecosystem.</span>
+                    </li>
+                    <li class="flex gap-8 items-start">
+                        <div class="w-10 h-[2px] bg-cyan-400 mt-4"></div>
+                        <span>Implemented <span class="text-white font-bold">CI/CD automation via Jenkins</span>, optimizing release cycles in a highly-regulated environment.</span>
+                    </li>
+                    <li class="flex gap-8 items-start">
+                        <div class="w-10 h-[2px] bg-cyan-400 mt-4"></div>
+                        <span>Developed full-stack Java/Angular features for complex data processing and visualization.</span>
+                    </li>
                 </ul>
             </div>
         </section>
 
-        <!-- SKILLS MATRIX -->
-        <section id="skills" class="mb-40">
-            <div class="section-header">
-                <h3 class="text-2xl font-bold tracking-widest">Capability Matrix</h3>
+        <!-- EDUCATION & SKILLS MATRIX -->
+        <section id="skills" class="grid grid-cols-1 lg:grid-cols-3 gap-16 mb-64 reveal">
+            <div class="lg:col-span-2">
+                <div class="section-header mb-12"><h3 class="text-3xl font-black uppercase">Capability Matrix</h3></div>
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="hud-card p-10">
+                        <p class="text-cyan-400 font-black text-[10px] tracking-[0.4em] mb-6 uppercase">Analysis Core</p>
+                        <p class="text-lg text-white font-mono uppercase leading-loose">SQL / Excel / Trend Modeling / Requirements</p>
+                    </div>
+                    <div class="hud-card p-10">
+                        <p class="text-cyan-400 font-black text-[10px] tracking-[0.4em] mb-6 uppercase">Visualization</p>
+                        <p class="text-lg text-white font-mono uppercase leading-loose">Tableau / Power BI / Dashboards</p>
+                    </div>
+                    <div class="hud-card p-10">
+                        <p class="text-cyan-400 font-black text-[10px] tracking-[0.4em] mb-6 uppercase">Code / Cloud</p>
+                        <p class="text-lg text-white font-mono uppercase leading-loose">Python / GCP (ACE) / Java / Docker</p>
+                    </div>
+                    <div class="hud-card p-10">
+                        <p class="text-cyan-400 font-black text-[10px] tracking-[0.4em] mb-6 uppercase">Infrastructure</p>
+                        <p class="text-lg text-white font-mono uppercase leading-loose">CI-CD / Jenkins / Agile / NCC Leadership</p>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                <div class="bg-[#121317] p-8 border border-gray-800">
-                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Analysis</p>
-                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">SQL / Excel / Modeling / Requirements</p>
-                </div>
-                <div class="bg-[#121317] p-8 border border-gray-800">
-                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Visualization</p>
-                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Tableau / Power BI / Reporting</p>
-                </div>
-                <div class="bg-[#121317] p-8 border border-gray-800">
-                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Cloud/Code</p>
-                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Python / GCP (ACE) / Java / Docker</p>
-                </div>
-                <div class="bg-[#121317] p-8 border border-gray-800">
-                    <p class="text-cyan-400 font-bold text-[11px] uppercase mb-4 tracking-[0.2em]">Infrastructure</p>
-                    <p class="text-xs text-gray-500 font-mono uppercase leading-relaxed">Jenkins / CI-CD / Agile / DevOps</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- EDUCATION -->
-        <section id="education" class="mb-40">
-            <div class="section-header">
-                <h3 class="text-2xl font-bold tracking-widest">Education & Credentials</h3>
-            </div>
-            <div class="bg-[#0e0f12] p-10 border border-gray-900 rounded-sm shadow-xl relative overflow-hidden">
-                <div class="mb-10">
-                    <h4 class="text-2xl font-bold text-white mb-2 tracking-widest">B.Tech. in CSE - Big Data & Cloud Engineering</h4>
-                    <p class="text-red-700 font-bold text-sm tracking-widest uppercase mb-1">MIT ADT University, Pune</p>
-                    <p class="text-gray-500 text-sm font-mono tracking-widest">CGPA: 8.44 | GRADUATED: 2025</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-gray-800/50">
+            <div id="education">
+                <div class="section-header mb-12"><h3 class="text-3xl font-black uppercase">Education</h3></div>
+                <div class="hud-card p-10 h-full flex flex-col justify-between" onclick="window.open('https://mituniversity.ac.in/', '_blank')">
                     <div>
-                        <p class="text-cyan-400 font-bold text-[10px] uppercase mb-6 tracking-widest">Verified Credentials</p>
-                        <ul class="text-xs text-gray-500 space-y-4 font-mono uppercase">
-                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> Google Associate Cloud Engineer (ACE)</li>
-                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> Java Full Stack Development (Unstop)</li>
-                            <li class="flex items-start gap-2"><span class="text-red-900">▹</span> NCC 'C' Certificate (Grade A)</li>
+                        <h4 class="text-xl font-black text-white mb-4">B.Tech. in Big Data & Cloud</h4>
+                        <p class="text-red-700 font-bold uppercase text-sm mb-2">MIT ADT University, Pune</p>
+                        <p class="text-cyan-500 font-mono text-2xl mb-10">CGPA: 8.44</p>
+                    </div>
+                    <div class="border-t border-gray-800 pt-8">
+                        <p class="text-[10px] text-gray-500 font-black tracking-widest mb-6">CERTIFICATIONS</p>
+                        <ul class="text-xs text-white space-y-4 font-mono uppercase">
+                            <li>▹ Google ACE Certified</li>
+                            <li>▹ Java Full Stack (Unstop)</li>
+                            <li>▹ NCC 'C' (Grade A)</li>
                         </ul>
                     </div>
-                    <div>
-                        <p class="text-cyan-400 font-bold text-[10px] uppercase mb-6 tracking-widest">Protocols & Interests</p>
-                        <p class="text-xs text-gray-400 mb-4 font-mono"><span class="text-red-900">LANGUAGES:</span> ENGLISH, HINDI, MALAYALAM, MARATHI</p>
-                        <p class="text-xs text-gray-400 font-mono"><span class="text-red-900">INTERESTS:</span> POSTER MAKING, EMBROIDERY, CULTURAL AWARENESS</p>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer class="text-center pt-24 pb-12 border-t border-red-900/20">
-            <h3 class="text-2xl font-black tracking-[0.6em] text-red-900 uppercase mb-8">INITIATE CONTACT</h3>
-            <p class="text-gray-500 font-mono text-sm mb-16 tracking-widest">jessyjamess39@gmail.com</p>
-            <div class="flex justify-center gap-16 text-[11px] font-bold tracking-[0.4em] text-gray-500 uppercase">
+        <!-- FOOTER CONTACT -->
+        <footer class="text-center pt-32 pb-16 border-t border-red-900/20 reveal">
+            <p class="text-[10px] font-black text-cyan-500 tracking-[1em] mb-12 uppercase">-- MISSION STATUS: SUCCESS --</p>
+            <h3 class="text-4xl font-black text-red-900 uppercase mb-8">INITIATE CONNECTION</h3>
+            <p class="text-white font-mono text-2xl mb-20 tracking-widest underline decoration-red-900 underline-offset-8">jessyjamess39@gmail.com</p>
+            <div class="flex justify-center gap-24 text-[10px] font-black tracking-[0.5em] text-gray-500 uppercase">
                 <a href="https://www.linkedin.com/in/james-jessy" target="_blank" class="hover:text-cyan-400 transition-colors">LinkedIn</a>
-                <button onclick="copyEmail()" class="hover:text-cyan-400 transition-colors cursor-pointer uppercase">Email.Auth</button>
+                <button onclick="copyEmail()" class="hover:text-cyan-400 transition-colors">Email.Auth</button>
             </div>
+            <p class="mt-32 text-[8px] text-gray-800 font-mono">ENCRYPTED PORTFOLIO V2.5 // BUILT BY JESSY JAMES</p>
         </footer>
+
     </main>
 
     <script>
         const synth = new Tone.PolySynth(Tone.Synth).toDestination();
-        const apiKey = "AIzaSyBvyy5O1NjhAAy9yiB3EHz8SJbgZAc0ziI"; // Built-in environment provides key
+        const apiKey = "AIzaSyBvyy5O1NjhAAy9yiB3EHz8SJbgZAc0ziI"; // Insert key for live production
         const logArea = document.getElementById('log-output');
 
+        // Reveal animations on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Slider Sync
         document.getElementById('session-time').addEventListener('input', (e) => {
             document.getElementById('session-val').textContent = e.target.value + " MIN";
         });
 
-        async function log(msg, color = "text-gray-500") {
+        async function log(msg, color = "text-gray-400") {
             const p = document.createElement('p');
-            p.className = `${color} mb-1 flex gap-2`;
-            p.innerHTML = `<span class="text-red-950 font-bold">>></span> <span>${msg}</span>`;
+            p.className = `${color} mb-2 flex gap-4`;
+            p.innerHTML = `<span class="text-red-950 font-bold">>>></span> <span>${msg}</span>`;
             logArea.appendChild(p);
             logArea.scrollTop = logArea.scrollHeight;
-            synth.triggerAttackRelease(300 + Math.random() * 200, "32n");
-            await new Promise(r => setTimeout(r, 80));
+            synth.triggerAttackRelease(Math.random() * 200 + 100, "32n");
+            await new Promise(r => setTimeout(r, 60));
         }
 
         async function runScanner() {
@@ -424,70 +408,52 @@
             const btn = document.getElementById('scan-btn');
             const core = document.getElementById('data-core');
             const riskText = document.getElementById('risk-text');
+            const riskBar = document.getElementById('risk-bar');
 
             btn.disabled = true;
             logArea.innerHTML = "";
             core.classList.add('active');
             core.textContent = "SCANNING";
-            riskText.textContent = "CALCULATING...";
-            riskText.className = "text-xl font-bold text-gray-500";
+            riskText.textContent = "CALC...";
+            riskBar.style.width = "0%";
             
             await Tone.start();
-            await log("SYNCING BEHAVIORAL NODES...");
-            await log(`VECTOR_MAP: FREQ(${freq}) TIME(${time}) TIER(${type.toUpperCase()})`);
+            await log("SYNCING BEHAVIORAL VECTORS...");
+            await log(`PARAMS: F:${freq} D:${time} T:${type.toUpperCase()}`);
             
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 800));
             
-            let risk = ""; let color = ""; let logMsg = "";
+            let risk = ""; let color = ""; let barColor = ""; let logMsg = ""; let barWidth = "50%";
             
-            /* --- EXPERT ANALYTIC LOGIC MATRIX --- */
-            
-            // 1. ANOMALY: The Ghost Premium (Daily Frequency but Zero/Least Session Mins)
-            if (freq >= 2 && time <= 5 && type === 'premium') {
-                risk = "ZOMBIE PREM"; color = "text-orange-600";
-                logMsg = "ANOMALY: High login frequency with zero session depth. Flagging as 'Ghost User'.";
-            } 
-            // 2. EXTREME: Total Inactivity
-            else if (freq === 0 && time <= 10) {
-                risk = "TOTAL LOSS"; color = "text-red-600";
-                logMsg = "CRITICAL: Account inactive. High churn probability detected.";
-            } 
-            // 3. UPSELL: High Value Free (Expert Insight)
-            else if (type === 'free' && (freq >= 2 || time >= 40)) {
-                risk = "UPSELL OP"; color = "text-blue-400";
-                logMsg = "INSIGHT: High-utility free user found. Target for Premium migration strategy.";
-            }
-            // 4. POWER: High Value Premium
-            else if (freq >= 3 && time >= 45) {
-                risk = "POWER USER"; color = "text-green-500";
-                logMsg = "STATUS: Maximum engagement tier. Loyalty probability: 99.8%.";
-            } 
-            // 5. THE DEEP ENGAGER: (The Shinu Edge Case) Monthly + High Time
-            else if (freq <= 1 && time >= 60) {
-                risk = "DEEP ENGAGER"; color = "text-cyan-400";
-                logMsg = "INSIGHT: High depth / Low frequency pattern. User displays focused interaction.";
-            }
-            // 6. RISK: Idle Premium (Pays but uses monthly)
-            else if (type === 'premium' && freq <= 1) {
-                risk = "IDLE PREM"; color = "text-orange-500";
-                logMsg = "WARNING: Premium tier under-utilization. Subject to immediate churn.";
-            }
-            // 7. STABLE: Standard Premium
-            else if (type === 'premium') {
-                risk = "LOYAL USER"; color = "text-cyan-400";
-                logMsg = "STATUS: Stable engagement trend within paid ecosystem.";
-            }
-            // 8. DEFAULT: Standard Free
-            else {
-                risk = "MODERATE RISK"; color = "text-yellow-500";
-                logMsg = "STATUS: Standard baseline free-tier engagement.";
+            // Logic Core
+            if (time <= 5 && type === 'premium') {
+                risk = "ZOMBIE PREM"; color = "text-orange-600"; barColor = "#ea580c"; barWidth = "85%";
+                logMsg = "ANOMALY: Active billing, zero engagement. High Silent Churn probability.";
+            } else if (freq === 0 && time <= 10) {
+                risk = "TOTAL LOSS"; color = "text-red-600"; barColor = "#dc2626"; barWidth = "100%";
+                logMsg = "CRITICAL: Vector dead. Recommendation: Abandon/Offboard.";
+            } else if (freq >= 2 && time >= 45 && type === 'premium') {
+                risk = "POWER USER"; color = "text-green-500"; barColor = "#22c55e"; barWidth = "5%";
+                logMsg = "STATUS: Optimal engagement profile. Lifetime Value maximized.";
+            } else if (freq <= 1 && time >= 60) {
+                risk = "DEEP ENGAGER"; color = "text-cyan-400"; barColor = "#4fd1c5"; barWidth = "15%";
+                logMsg = "INSIGHT: High depth, low frequency. High quality research segment.";
+            } else if (type === 'free' && (freq >= 2 || time >= 40)) {
+                risk = "UPSELL OP"; color = "text-blue-400"; barColor = "#3b82f6"; barWidth = "30%";
+                logMsg = "INSIGHT: High-utility free user. Trigger conversion protocol.";
+            } else {
+                risk = "MODERATE"; color = "text-yellow-500"; barColor = "#eab308"; barWidth = "60%";
+                logMsg = "STATUS: Standard baseline behavior. Retain via ad-flow.";
             }
 
             await log(logMsg, "text-cyan-400");
-            await log("ANALYTIC SEQUENCE COMPLETE.", "text-white");
+            await log("ANALYSIS COMPLETE.", "text-white");
             
             riskText.textContent = risk;
-            riskText.className = `text-xl font-bold ${color} shadow-lg scale-110 transition-all`;
+            riskText.className = `text-4xl font-black ${color} scale-110 transition-all`;
+            riskBar.style.width = barWidth;
+            riskBar.style.backgroundColor = barColor;
+            riskBar.style.boxShadow = `0 0 15px ${barColor}`;
             
             core.classList.remove('active');
             core.textContent = "READY";
@@ -501,23 +467,32 @@
             const spinner = document.getElementById('loading-spinner');
             if(!role) return;
             btn.disabled = true; spinner.classList.remove('hidden');
-            output.textContent = "SYNCING PROFILE DATA WITH GEMINI CORE...";
-            const systemPrompt = "Expert recruitment consultant for Data Analysts. Rewrite summary for job role, max 3 sentences. Gibberish check: if nonsense, say 'SYSTEM ERROR: INVALID PARAMETERS.'";
+            output.textContent = ""; output.classList.add('typing');
+
+            const systemPrompt = "Expert recruiter. Rewrite candidate's summary for provided job role. Focus on Equifax, SQL, GCP, Data Analyst skills. Max 3 sentences. No fluff.";
             const profile = document.getElementById('professional-summary').textContent;
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Role: ${role}\nProfile: ${profile}` }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Role: ${role}\nProfile: ${profile}` }] }], systemInstruction: { parts: [{ text: systemPrompt }] } })
                 });
                 const data = await res.json();
-                output.textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Calibration failed.";
-                synth.triggerAttackRelease(["C5", "E5", "G5"], "8n");
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Calibration failed.";
+                output.classList.remove('typing');
+                // Simple typewriter effect for the AI
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        output.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 20);
+                    }
+                }
+                typeWriter();
+                synth.triggerAttackRelease(["C5", "G5"], "8n");
             } catch (e) {
-                output.textContent = "CONNECTION ERROR: RETRY UPLINK.";
+                output.textContent = "CONNECTION ERROR: Check your uplink/API key.";
             } finally {
                 btn.disabled = false; spinner.classList.add('hidden');
             }
@@ -527,9 +502,9 @@
             const email = "jessyjamess39@gmail.com";
             const textArea = document.createElement("textarea");
             textArea.value = email;
-            textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
+            textArea.style.position = "fixed"; textArea.style.left = "-9999px";
             document.body.appendChild(textArea);
-            textArea.focus(); textArea.select();
+            textArea.select();
             try {
                 if (document.execCommand('copy')) {
                     const toast = document.getElementById('toast');
@@ -542,7 +517,7 @@
             setTimeout(() => { window.location.href = `mailto:${email}`; }, 100);
         }
 
-        window.onload = () => log("AWAITING BEHAVIORAL PARAMETERS FOR ANALYTIC SCAN...");
+        window.onload = () => log("AWAITING PARAMETERS FOR NEURAL SCAN...");
     </script>
 </body>
 </html>
